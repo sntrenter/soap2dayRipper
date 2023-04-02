@@ -29,3 +29,6 @@ print(links)
 
 # Close the web driver
 driver.quit()
+
+
+#maybe add tinydb for storing information on what has been downloaded already and what hasn't
