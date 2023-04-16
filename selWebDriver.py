@@ -3,7 +3,10 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
-from cookies import cookies
+import time
+#from cookies import cookies
+
+chrome_driver_path = "\chromedriver_win32\chromedriver.exe"
 
 #get all links in an h5 from the page using beautiful soup
 def getLinks(url):
@@ -41,26 +44,39 @@ if continue_button:
 
 disabled = False
 while not disabled: 
-    #get current html
-    html = driver.page_source
-    soup = BeautifulSoup(html, 'html.parser')
-    links = soup.find_all('h5')
-    print(links)
-    pagination = soup.find('ul', class_='pagination')
-
-    # Find the last li element in the pagination list
-    last_li = pagination.find_all('li')[-1]
-
-    # Check if the last li element is disabled
-    if 'disabled' in last_li.get('class', []):
-        print('The last element is disabled')
-        disabled = True
-        break;
-    else:
-        print('The last element is enabled')
-        nextPageBtn = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), '»')]")))
-        nextPageBtn.click()
-    break
+    try:
+        time.sleep(1)
+        #get current html
+        html = driver.page_source
+        soup = BeautifulSoup(html, 'html.parser')
+        links = soup.find_all('h5')
+        print(links)
+        pagination = soup.find('ul', class_='pagination')
+    
+        # Find the last li element in the pagination list
+        last_li = pagination.find_all('li')[-1]
+    
+        # Find the li element with the active class
+        active_li = soup.find('li', class_='active')
+        
+        # Get the text of the span element inside it
+        highlighted_number = active_li.find('span').text
+        
+        print(highlighted_number)
+    
+        # Check if the last li element is disabled
+        if 'disabled' in last_li.get('class', []):
+            print('The last element is disabled')
+            disabled = True
+            break;
+        else:
+            print('The last element is enabled')
+            nextPageBtn = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), '»')]")))
+            nextPageBtn.click()
+    except:
+        time.sleep(5)
+        driver.refresh()
+    
 print("End")
 # Close the web driver
 driver.quit()
