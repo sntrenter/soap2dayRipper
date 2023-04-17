@@ -1,12 +1,23 @@
 from undetected_chromedriver import Chrome, ChromeOptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 import time
 #from cookies import cookies
 
 chrome_driver_path = "\chromedriver_win32\chromedriver.exe"
+
+# Configure the web driver (in this case, Chrome)
+options = ChromeOptions()
+options.add_argument("--disable-blink-features=AutomationControlled")
+service = Service(executable_path=chrome_driver_path)
+driver = Chrome(options=options, service=service)
+#driver = webdriver.Chrome(ChromeDriverManager().install(), options=options, service=Service(chrome_driver_path))
+
 
 #get all links in an h5 from the page using beautiful soup
 def getLinks(url):
@@ -15,10 +26,6 @@ def getLinks(url):
     links = soup.find_all('h5')
     return links
 
-# Configure the web driver (in this case, Chrome)
-options = ChromeOptions()
-options.add_argument("--disable-blink-features=AutomationControlled")
-driver = Chrome(options=options)
 
 driver.get("https://soap2day.to")
 
@@ -73,6 +80,7 @@ while not disabled:
             print('The last element is enabled')
             nextPageBtn = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), '»')]")))
             nextPageBtn.click()
+        break
     except:
         time.sleep(5)
         driver.refresh()
